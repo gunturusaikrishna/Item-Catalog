@@ -1,15 +1,15 @@
 # Item-Catalog 
 
-# ABOUT: 
+## ABOUT: 
 
-## This project is RESTful web application which accesses a PostgreSQL database to Catalog which stores information about items and respective categories by using the Python Flask framework. Oauth2 authentication and authorization allows user to perform CRUD (Create, Read, Update and Delete) operations. So only users who are successfully logged into Google accounts can perform these CRUD operations. 
+### This project is RESTful web application which accesses a PostgreSQL database to Catalog which stores information about items and respective categories by using the Python Flask framework. Oauth2 authentication and authorization allows user to perform CRUD (Create, Read, Update and Delete) operations. So only users who are successfully logged into Google accounts can perform these CRUD operations. 
 
-# REPOSITORY: 
+## REPOSITORY: 
 
-## The project consists of respective HTML files placed in templates folder , CSS files placed in static folder and consits of mainly 3 pthon files. 
+### The project consists of respective HTML files placed in templates folder , CSS files placed in static folder and consits of mainly 3 pthon files. 
 1) For Creating SQL database  2) For inserting the items  3) For running the main program. 
 
-# REQUIREMENTS: 
+## REQUIREMENTS: 
 
 * PYTHON 2.7 
 
@@ -29,7 +29,7 @@
 
 * SQLALCHEMY 
 
-# HOW TO START: 
+## HOW TO START: 
 
 * Go to project folder and open terminal emulator.
 
