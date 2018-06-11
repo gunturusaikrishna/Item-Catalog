@@ -2,12 +2,19 @@
 
 ## ABOUT: 
 
-### This project is RESTful web application which accesses a PostgreSQL database to Catalog which stores information about items and respective categories by using the Python Flask framework. Oauth2 authentication and authorization allows user to perform CRUD (Create, Read, Update and Delete) operations. So only users who are successfully logged into Google accounts can perform these CRUD operations. 
+This project is RESTful web application which accesses a PostgreSQL database to Catalog which stores information about   items and respective categories by using the Python Flask framework. Oauth2 authentication and authorization allows user to  perform CRUD (Create, Read, Update and Delete) operations. So only users who are successfully logged into Google accounts   can  perform these CRUD operations. 
 
 ## REPOSITORY: 
 
-### The project consists of respective HTML files placed in templates folder , CSS files placed in static folder and consits of mainly 3 pthon files. 
-1) For Creating SQL database  2) For inserting the items  3) For running the main program. 
+The project consists of respective HTML files placed in templates folder , CSS files placed in static folder and consits of mainly 4 pthon files. 
+
+1) For Creating SQL database .
+
+2) For inserting the items.  
+
+3) For accessing new user.
+
+4)For running the main program.
 
 ## REQUIREMENTS: 
 
@@ -33,13 +40,21 @@
 
 * Go to project folder and open terminal emulator.
 
-* Start vagrant virtual machine with (vagrant up). 
+* Run ( sudo apt-get install python-vitualenv ).
 
-* Run ( vagrant.ssh) to connect to virtual machine. 
+* Run ( sudo apt-get install python-pip ).
 
-* Run the database_setup.py file to access database.
+* Run ( virtualenv flask-env ).
 
-* Run the webserver.py to insert items into databse.
+* Run ( source flask-env/bin/activate ).
+
+* Run ( pip install sqlalchemy , pip install oauth2client, pip install requests, pip install dicttoxml ).
+
+* Run the database_setup.py to create database.
+
+* Run the populate_setup.py to insert items into databse.
+
+* Run the helper.py to access new users.
 
 * Run the project.py to connect to server. 
 
