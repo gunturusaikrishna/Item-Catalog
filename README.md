@@ -14,7 +14,7 @@ The project consists of respective HTML files placed in templates folder , CSS f
 
 3) For accessing new user.
 
-4)For running the main program.
+4) For running the main program.
 
 ## REQUIREMENTS: 
 
