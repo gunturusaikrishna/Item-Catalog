@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="col-md-8">
+        <h2>{{ item }}</h2>
+        <p>{{ description }}</p>
+        {% if login_state %}
+            <a href="{{ url_for('item_edit', item_id = item_id) }}">Edit</a> | <a href="{{ url_for('item_delete', item_id = item_id) }}">Delete</a>
+        {% endif %}
+    </div>
+    {% if picture != None %}
+    <div class="col-md-3">
+        <img src="/static/images/{{ picture }}" height="200px">
+    </div>
+    {% endif %}
+{% endblock %}

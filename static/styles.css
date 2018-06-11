@@ -1,0 +1,19 @@
+ .jumbotron {
+            padding:70px 30px 70px 30px;
+            margin:70px auto;
+            background-color:  	  #ff3333;
+            }
+
+        .main-container {
+            padding: 20px;
+            background-color:    #ffffff;
+        }
+
+        body {
+            background-color:  	 #ff3333; 
+        }
+
+        .item-anchor {
+            color: orangered;
+            font-size: large;
+        }
