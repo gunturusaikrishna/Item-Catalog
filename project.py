@@ -5,10 +5,16 @@ import json
 import requests
 import os
 import dicttoxml
-
-from flask import Flask, render_template
-from flask import request, redirect, url_for, make_response
-from flask import jsonify, abort, flash, session as login_session
+from flask import (Flask,
+                   render_template,
+                   request,
+                   redirect,
+                   url_for,
+                   make_response,
+                   jsonify,
+                   abort,
+                   flash,
+                   session as login_session)
 
 from sqlalchemy import create_engine, desc
 from sqlalchemy.orm import sessionmaker
@@ -17,9 +23,13 @@ from sqlalchemy.orm.exc import NoResultFound
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
 
-from database_setup import Base, Category, Item
-from helper import get_user_id, create_user, get_all_categories
-from helper import user_logged_in, allowed_file, generate_csrf_token
+from database_setup import Base, Category, Item, User
+from helper import (get_user_id,
+                    create_user,
+                    get_all_categories,
+                    user_logged_in,
+                    allowed_file,
+                    generate_csrf_token)
 __author__ = 'Sai'
 UPLOAD_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                            'static/images/')
@@ -151,10 +161,14 @@ def gconnect():
     login_session['email'] = data['email']
 
     # see if user exists, if it doesn't make a new one
-    user_id = get_user_id(login_session['email'])
-    if not user_id:
-        user_id = create_user(login_session)
+    user_id = getUserID(login_session['email'])
+    if user_id:
+        print 'Existing user#' + str(user_id) + 'matches this email'
+    else:
+        user_id = createUser(login_session)
+        print 'New user_id#' + str(user_id) + 'created'
     login_session['user_id'] = user_id
+    print 'Login session is tied to :id#' + str(login_session['user_id'])
 
     output = ''
     output += '<h1>Welcome, '
@@ -166,6 +180,30 @@ def gconnect():
     -webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
     flash("you are now logged in as %s" % login_session['username'])
     return output
+
+
+# Helper Functions
+def createUser(login_session):
+    newUser = User(name=login_session['username'],
+                   email=login_session['email'],
+                   picture=login_session['picture'])
+    session.add(newUser)
+    session.commit()
+    user = session.query(User).filter_by(email=login_session['email']).first()
+    return user.id
+
+
+def getUserInfo(user_id):
+    user = session.query(User).filter_by(id=user_id).first()
+    return user
+
+
+def getUserID(email):
+    try:
+        user = session.query(User).filter_by(email=email).first()
+        return user.id
+    except:
+        return None
 
 # google oauth disconnect
 
@@ -190,7 +228,8 @@ def gdisconnect():
         del login_session['username']
         del login_session['email']
         del login_session['picture']
-
+        del login_session['user_id']
+        del login_session['provider']
         return redirect(url_for('index'))
     else:
         # For whatever reason, the given token was invalid.
@@ -241,11 +280,7 @@ def item_description(category, item):
 # Add menu item
 @app.route('/catalog/new', methods=['GET', 'POST'])
 def item_new():
-    if 'username' not in login_session:
-        return redirect('/login')
-
-    try:
-        if request.method == 'POST' and request.form['title'] != "":
+        if request.method == 'POST':
             image = request.files['image']
             image_filename = None
             if allowed_file(image.filename):
@@ -264,26 +299,23 @@ def item_new():
                             description=request.form['description'],
                             category=category,
                             picture=image_filename)
-            session.add(item)
-            session.commit()
-            return redirect(url_for('index'))
+                session.add(item)
+                session.commit()
+                return redirect(url_for('index'))
         else:
             categories = session.query(Category).all()
             return render_template('item_add.html',
                                    categories=categories,
                                    login_state=user_logged_in())
-    except NoResultFound:
-        return redirect(url_for('index'))
 
 
 # Edit menu item
-@app.route('/catalog/<item_id>/edit', methods=['GET', 'POST'])
+@app.route('/catalog/<item_id>/edit/', methods=['GET', 'POST'])
 def item_edit(item_id):
-    if 'username' not in login_session:
-        return redirect('/login')
-
-    try:
+        if 'username' not in login_session:
+                return redirect('/login')
         item = session.query(Item).filter_by(id=item_id).one()
+
         if request.method == 'POST':
             item.title = request.form['title']
             item.description = request.form['description']
@@ -300,24 +332,24 @@ def item_edit(item_id):
                            image.filename))
                 item.picture = image.filename
 
-            session.commit()
-            return redirect(url_for('index'))
+        session.commit()
+        return redirect(url_for('index'))
         else:
             categories = session.query(Category).all()
             return render_template('item_edit.html', item=item,
                                    categories=categories,
                                    login_state=user_logged_in())
-    except NoResultFound:
-        return redirect(url_for('index'))
+        if Item.user_id != login_session['user_id']:
+	        return "<script>function myFunction() {alert('You are not authorized to \
+             edit this item.Please create your own item in \
+             order to edit items.');}</script><body onload='myFunction()''>"
 
 
 # Delete menu item
-@app.route('/catalog/<item_id>/delete', methods=['GET', 'POST'])
+@app.route('/catalog/<item_id>/delete/', methods=['GET', 'POST'])
 def item_delete(item_id):
-    if 'username' not in login_session:
-        return redirect('/login')
-
-    try:
+        if 'username' not in login_session:
+            return redirect('/login')
         item = session.query(Item).filter_by(id=item_id).one()
         if request.method == 'POST':
 
@@ -330,14 +362,14 @@ def item_delete(item_id):
                 session.commit()
                 os.remove(os.path.join(app.config['UPLOAD_FOLDER'],
                           item.picture))
-                return redirect(url_for('index'))
+                return redirect(url_for('index', item_id=item_id))
         else:
             return render_template('item_delete.html',
                                    item=item, login_state=user_logged_in())
-    except NoResultFound:
-        return redirect(url_for('index'))
-
-
+        if Item.user_id != login_session['user_id']:
+		return "<script>function myFunction() {alert('You are not authorized to \
+          delete this item.Please create your own item in \
+          order to edit items.');}</script><body onload='myFunction()''>"
 # Helper functions
 
 if __name__ == '__main__':
