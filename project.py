@@ -332,8 +332,8 @@ def item_edit(item_id):
                            image.filename))
                 item.picture = image.filename
 
-        session.commit()
-        return redirect(url_for('index'))
+            session.commit()
+            return redirect(url_for('index'))
         else:
             categories = session.query(Category).all()
             return render_template('item_edit.html', item=item,
